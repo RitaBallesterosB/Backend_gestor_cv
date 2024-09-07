@@ -97,6 +97,17 @@ app.post('/api/create-user-cv', async (req, res) => {
    }
 });
 
+// Endpoint de prueba para crear tipo_ area_ocupacion
+app.post('/api/create-tipo-area-ocupacion', async (req, res) => {
+    console.log('POST /api/create-tipo-area-ocupacion'); // Log para verificar la llegada de la solicitud
+    try {
+        const tipoAreaOcupacion = new TipoAreaOcupacion(req.body);
+        await tipoAreaOcupacion.save();
+        res.status(201).send(tipoAreaOcupacion);
+    } catch (error) {
+        res.status(400).send(error);
+    }
+})
  // Configurar el servidor Node
 
  app.listen (puerto, () =>  {
