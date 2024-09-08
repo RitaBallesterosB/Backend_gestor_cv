@@ -35,7 +35,7 @@ const userRegisterSchema = Schema({
   role: {
     type: String,
     enum: ['usuario', 'ADMIN'],
-    required: true
+    default: 'usuario' // Valor por defecto
   }
 });
 

@@ -2,12 +2,7 @@ import express from 'express';
 import connection from './database/connection.js';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-
-// Importar los modelos
-import UserRegister from './models/users_register.js';
-import UserCV from './models/users_cv.js';
-import AreaOcupacion from './models/area_ocupacion.js';
-import TipoAreaOcupacion from './models/tipo_area_ocupacion.js';
+import UserRoutes from "./routes/user_register.js";
 
 
 
@@ -35,17 +30,20 @@ connection();
  app.use(bodyParser.urlencoded ({extended: true}));
 
  //configurar rutas del aplicativo
+ app.use('/api/users', UserRoutes);
 
- //Ruta de prueba
- app.get('/ruta-prueba', (req, res) => {
-    return res.status(200).json(
-        {
-            'id':1,
-            'name': 'carolina',
-            'username': 'caro'
-        }
-    )
- })
+
+
+//  //Ruta de prueba
+//  app.get('/ruta-prueba', (req, res) => {
+//     return res.status(200).json(
+//         {
+//             'id':1,
+//             'name': 'carolina',
+//             'username': 'caro'
+//         }
+//     )
+//  })
 
  // Endpoint de prueba  para crear un usuario registrado
 app.post('/api/create-user-register', async (req, res) => {
@@ -60,42 +58,6 @@ app.post('/api/create-user-register', async (req, res) => {
 
 
 
-// Endpoint de prueba para crear area_ocupacion
-app.post('/api/create-area-ocupacion', async (req, res) => {
-   console.log('POST /api/create-area-ocupacion'); // Log para verificar la llegada de la solicitud
-   try {
-       const areaOcupacion = new AreaOcupacion(req.body);
-       await areaOcupacion.save();
-       res.status(201).send(areaOcupacion);
-   } catch (error) {
-       res.status(400).send(error);
-   }
-});
-
-
-
-// Endpoint de prueba para crear un CV de usuario
-app.post('/api/create-user-cv', async (req, res) => {
-   try {
-       const userCV = new UserCV(req.body);
-       await userCV.save();
-       res.status(201).send(userCV);
-   } catch (error) {
-       res.status(400).send(error);
-   }
-});
-
-// Endpoint de prueba para crear tipo_ area_ocupacion
-app.post('/api/create-tipo-area-ocupacion', async (req, res) => {
-    console.log('POST /api/create-tipo-area-ocupacion'); // Log para verificar la llegada de la solicitud
-    try {
-        const tipoAreaOcupacion = new TipoAreaOcupacion(req.body);
-        await tipoAreaOcupacion.save();
-        res.status(201).send(tipoAreaOcupacion);
-    } catch (error) {
-        res.status(400).send(error);
-    }
-})
  // Configurar el servidor Node
 
  app.listen (puerto, () =>  {
