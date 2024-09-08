@@ -12,5 +12,9 @@ const areaOcupacionSchema = new Schema({
   }
 });
 
+// Crear un índice en el campo 'nombre'
+areaOcupacionSchema.index({ nombre: 1 }); // 1 para índice ascendente, -1 para descendente
+
+
 export default model('AreaOcupacion', areaOcupacionSchema, 'area_ocupacion');
 

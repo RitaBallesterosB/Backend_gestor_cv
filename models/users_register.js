@@ -16,12 +16,13 @@ const userRegisterSchema = Schema({
     type: String,
     required: true,
     maxlength: 120,
-    unique: true
+    unique: true,
+    match: [/.+@.+\..+/, 'Por favor ingrese un correo electrónico válido']
   },
   password: {
     type: String,
     required: true,
-    maxlength: 12
+    maxlength: 200
   },
   created_at: {
     type: Date,

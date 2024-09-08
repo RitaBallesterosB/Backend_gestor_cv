@@ -18,6 +18,10 @@ const aptitudSchema = Schema({
   }
 });
 
+// Crear un índice en el campo 'nombre' para optimizar las búsquedas
+aptitudSchema.index({ nombre: 1 }); // Índice ascendente en el campo 'nombre'
+
+
 // Crear y exportar el modelo
 
 export default model('Aptitud', aptitudSchema, 'aptitudes'); 

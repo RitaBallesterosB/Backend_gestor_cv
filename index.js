@@ -9,8 +9,6 @@ import UserCV from './models/users_cv.js';
 import AreaOcupacion from './models/area_ocupacion.js';
 import TipoAreaOcupacion from './models/tipo_area_ocupacion.js';
 
-// Mensaje de bienvenida para verificar que ejecutó bien la API de Node
-console.log("API Node en ejecución");
 
 
 //Mensaje de bienvenida para verificar que ejecutó bien la API de NOde
@@ -74,17 +72,7 @@ app.post('/api/create-area-ocupacion', async (req, res) => {
    }
 });
 
-// Endpoint de prueba para crear tipo_ area_ocupacion
-app.post('/api/create-area-ocupacion', async (req, res) => {
-   console.log('POST /api/tipo-area-ocupacion'); // Log para verificar la llegada de la solicitud
-   try {
-       const tipoAreaOcupacion = new TipoAreaOcupacion(req.body);
-       await tipoAreaOcupacion.save();
-       res.status(201).send(tipoAreaOcupacion);
-   } catch (error) {
-       res.status(400).send(error);
-   }
-});
+
 
 // Endpoint de prueba para crear un CV de usuario
 app.post('/api/create-user-cv', async (req, res) => {

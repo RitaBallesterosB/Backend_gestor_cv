@@ -11,12 +11,12 @@ const userCVSchema = new Schema({
   },
   segundo_nombre: {
     type: String,
-    maxlength: 60,
+    maxlength: 100,
     default: null
   },
   segundo_apellido: {
     type: String,
-    maxlength: 60,
+    maxlength: 100,
     default: null
   },
   celular: {
@@ -30,26 +30,26 @@ const userCVSchema = new Schema({
     required: true
   },
   numero_dto: {
-    type: String,
+    type: Number,
     maxlength: 30,
     unique: true,
     required: true
   },
   bio: {
     type: String,
-    maxlength: 600,
+    maxlength: 1000,
     required: true,
     default: null
   },
   ocupacion: {
     type: String,
-    maxlength: 60,
+    maxlength: 120,
     required: true,
     default: null
   },
   region_residencia: {
     type: String,
-    maxlength: 60,
+    maxlength: 120,
     required: true,
     default: null
   },

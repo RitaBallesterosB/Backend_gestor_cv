@@ -17,6 +17,8 @@ const tipoAreaOcupacionSchema = Schema({
     required: true
   }
 });
+// Crear un índice en el campo 'nombre'
+tipoAreaOcupacionSchema.index({ nombre: 1 }); // 1 para índice ascendente
 
 // Crear y exportar el modelo
 ;
