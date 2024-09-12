@@ -12,7 +12,7 @@ const secret = process.env.SECRET_KEY;
  const createToken = (user)=> {
     const payload = {
         userId : user._id, 
-        name: user.name, // quitar para el deploy
+        nombre: user.nombre, // quitar para el deploy
         role: user.role,
         //Fecha de emisión
         iat: moment().unix(),
