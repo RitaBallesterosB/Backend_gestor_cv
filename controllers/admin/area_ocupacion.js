@@ -7,7 +7,7 @@ export const crearOcupacion =async (req, res)=> {
     try {
       const params = req.body;
 
-      // Verificar que llegue desde el body el parámetro text con su información
+      // Verificar que llegue desde el body el parámetro nombre con su información
       if (!params.nombre) {
         return res.status(400).send({
           status: "error",
