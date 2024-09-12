@@ -1,5 +1,6 @@
 import UserRegister from "../models/users_register.js";
 import bcrypt from "bcrypt"; // Para encriptar la contraseña
+import { createToken } from "../services/jwt.js";
 
 // Método Registro de Usuarios
 export const registerUser = async (req, res) => {
@@ -66,64 +67,68 @@ export const registerUser = async (req, res) => {
   }
 };
 
-//Método Inicio de Sesión
+// Método de autenticación de usuarios (login) usando JWT
 export const login = async (req, res) => {
   try {
-    //Obtener los datos de la petición
-
+    // Obtener los parámetros del body
     let params = req.body;
 
-    //Validamos los datos de email y password
-
-    if (!params.email || !params.password) {
+    // Validar parámetros: orreo_electronico, password
+    if (!params.orreo_electronico || !params.password) {
       return res.status(400).send({
         status: "error",
-        message: "Todos los campos son obligatorios",
+        message: "Faltan datos por enviar"
       });
     }
 
-    //Buscar en la bd si existe el email recibido
+    // Buscar en la BD si existe el orreo_electronico recibido
+    const user = await UserRegister.findOne({ correo_electronico: params.correo_electronico.toLowerCase() });
 
-    const user = await UserRegister.findOne({
-      email: params.email.toLowerCase(),
-    });
-
-    //Si no existe el usuario
-
-    if (!user) {
+    // Si no existe el usuario
+    if(!user) {
       return res.status(404).send({
         status: "error",
-        message: "Usuario no encontrado",
+        message: "Usuario no encontrado"
       });
     }
 
-    //Comprobar password
-
+    // Comprobar al contraseña
     const validPassword = await bcrypt.compare(params.password, user.password);
 
-    //Si la contraseña es incorrecta
-
-    if (!validPassword) {
+    // Si la contraseña es incorrecta
+    if(!validPassword) {
       return res.status(401).send({
         status: "error",
-        message: "Contraseña incorrecta",
+        message: "Contraseña incorrecta"
       });
     }
 
-    //Falta la parte del token 
+    // Generar token de autenticación
+    const token = createToken(user);
 
-    //Devolver los datos del usuario
+    // Devolver Token y datos del usuario autenticado
     return res.status(200).json({
       status: "success",
-      message: "Login exitoso"});
+      message: "Login exitoso",
+      token,
+      user: {
+        id: user._id,
+        nombre: user.nombre,
+        apellido: user.apellido,
+        correo_electronico: user.correo_electronico,
+        created_at: user.created_at
+      }
+    });
 
   } catch (error) {
-    //Manejo de errores
-    console.log("Error en la autenticación del usuario", error);
-    // Devuelve manejo de error
+    // Manejo de errores
+    console.log("Error en la autenticación del usuario:", error);
+    // Devuelve mensaje de error
     return res.status(500).send({
       status: "error",
-      message: "Error en la autenticación del usuario",
+      message: "Error en la autenticación del usuario"
     });
   }
-};
+}
+
+
