@@ -12,10 +12,19 @@ export const crearTipoOcupacion =async (req, res)=> {
       if (!params.nombre || !params.areaOcupacion) {
         return res.status(400).send({
           status: "error",
-          message: "Debes enviar el tipo de la ocupación",
+          message: "Debes enviar el nombre y el área de ocupación",
         });
       }
 
+
+      // Verificar si ya existe un TipoAreaOcupacion con el mismo nombre
+    const tipoOcupacionExistente = await TipoAreaOcupacion.findOne({ nombre: params.nombre });
+    if (tipoOcupacionExistente) {
+      return res.status(409).send({
+        status: "error",
+        message: "El Tipo de Ocupación ya existe en la base de datos",
+      });
+    }
       // Verificar si el área de ocupación existe 
     const ocupacionSeleccionada = await AreaOcupacion.findById(params.areaOcupacion);
     if (!ocupacionSeleccionada) {
@@ -32,14 +41,14 @@ export const crearTipoOcupacion =async (req, res)=> {
 
       });
 
-    // Guardar la nueva publicación en la BD
+    // Guardar el nuevo tipo área ocupación en la BD
     const tipoOcupacionStored = await newTipoOcupacion.save();
 
-    // Verificar si se guardó la publicación en la BD (si existe publicationStored)
+    // Verificar si se guardó el tipo area de ocupacion en la BD (si existe tipoOcupacionStored)
     if (!tipoOcupacionStored){
         return res.status(500).send({
           status: "error",
-          message: "No se ha guardado el tipo de  ocupación"
+          message: "No se ha guardado el tipo de área ocupación"
         });
       }
   

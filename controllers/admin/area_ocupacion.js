@@ -15,6 +15,14 @@ export const crearOcupacion =async (req, res)=> {
         });
       }
 
+      // Verificar si ya existe un Area Ocupación con el mismo nombre
+      const OcupacionExistente = await AreaOcupacion.findOne({nombre: params.nombre});
+      if (OcupacionExistente){
+        return res.status(409).send({
+          status: "error",
+          message: "El Tipo de Ocupación ya existe en la base de datos",
+        });
+      }
       // Crear el objeto del modelo
     let newAreaOcupacion = new AreaOcupacion(params);
 
