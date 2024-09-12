@@ -1,4 +1,4 @@
-import AreaOcupacion from '../models/area_ocupacion.js';
+import AreaOcupacion from '../../models/area_ocupacion.js';
 
 // Método para crear un área de ocupación
 
@@ -8,7 +8,7 @@ export const crearOcupacion =async (req, res)=> {
       const params = req.body;
 
       // Verificar que llegue desde el body el parámetro text con su información
-      if (!params.text) {
+      if (!params.nombre) {
         return res.status(400).send({
           status: "error",
           message: "Debes enviar el nombre de la ocupación",

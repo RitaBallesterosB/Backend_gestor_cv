@@ -3,8 +3,7 @@ import connection from './database/connection.js';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import UserRoutes from "./routes/user_register.js";
-
-
+import AdminRoutes from "./routes/admin/admin.js"
 
 //Mensaje de bienvenida para verificar que ejecutó bien la API de NOde
 
@@ -31,7 +30,7 @@ connection();
 
  //configurar rutas del aplicativo
  app.use('/api/users', UserRoutes);
-
+ app.use('/api/admin', AdminRoutes);
 
 
 //  //Ruta de prueba
