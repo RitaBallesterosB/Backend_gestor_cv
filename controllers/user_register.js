@@ -74,14 +74,14 @@ export const login = async (req, res) => {
     let params = req.body;
 
     // Validar parámetros: orreo_electronico, password
-    if (!params.orreo_electronico || !params.password) {
+    if (!params.correo_electronico || !params.password) {
       return res.status(400).send({
         status: "error",
         message: "Faltan datos por enviar"
       });
     }
 
-    // Buscar en la BD si existe el orreo_electronico recibido
+    // Buscar en la BD si existe el correo_electronico recibido
     const user = await UserRegister.findOne({ correo_electronico: params.correo_electronico.toLowerCase() });
 
     // Si no existe el usuario
