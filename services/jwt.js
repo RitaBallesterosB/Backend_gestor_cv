@@ -13,6 +13,8 @@ const secret = process.env.SECRET_KEY;
     const payload = {
         userId : user._id, 
         nombre: user.nombre, // quitar para el deploy
+        apellido:user.apellido,
+        correo_electronico: user.correo_electronico,
         role: user.role,
         //Fecha de emisión
         iat: moment().unix(),

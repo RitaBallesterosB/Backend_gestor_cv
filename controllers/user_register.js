@@ -1,6 +1,7 @@
 import UserRegister from "../models/users_register.js";
 import bcrypt from "bcrypt"; // Para encriptar la contraseña
 import { createToken } from "../services/jwt.js";
+import jwt from 'jwt-simple';
 
 // Método Registro de Usuarios
 export const registerUser = async (req, res) => {
@@ -27,6 +28,7 @@ export const registerUser = async (req, res) => {
       apellido: params.apellido,
       correo_electronico: params.correo_electronico.toLowerCase(),
       password: params.password,
+      role:params.role || 'usuario' // Asigna 'usuario' por defecto
     });
 
     // Busca si ya existe un usuario con el mismo correo electrónico
@@ -43,7 +45,7 @@ export const registerUser = async (req, res) => {
     }
 
     // Encriptar la contraseña
-    const salt = await bcrypt.genSalt(10); // Genera una sal para cifrar la contraseña
+    const salt = await bcrypt.genSalt(10); // Genera una salt para cifrar la contraseña
     const hashedPassword = await bcrypt.hash(user_register.password, salt); // Cifra la contraseña
     user_register.password = hashedPassword; // Asigna la contraseña cifrada al usuario
 
@@ -92,7 +94,7 @@ export const login = async (req, res) => {
       });
     }
 
-    // Comprobar al contraseña
+    // Comprobar la contraseña
     const validPassword = await bcrypt.compare(params.password, user.password);
 
     // Si la contraseña es incorrecta
@@ -103,7 +105,7 @@ export const login = async (req, res) => {
       });
     }
 
-    // Generar token de autenticación
+    // Generar token JWT
     const token = createToken(user);
 
     // Devolver Token y datos del usuario autenticado
@@ -116,7 +118,8 @@ export const login = async (req, res) => {
         nombre: user.nombre,
         apellido: user.apellido,
         correo_electronico: user.correo_electronico,
-        created_at: user.created_at
+        created_at: user.created_at,
+        role: user.role // Incluir el rol en la respuesta
       }
     });
 
