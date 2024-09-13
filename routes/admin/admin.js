@@ -8,7 +8,7 @@ import { ensureAuth, ensureAdmin } from "../../middlewares/auth.js";
 //Rutas para administrador
 router.post('/area-ocupacion',ensureAuth, ensureAdmin, crearOcupacion);
 router.post('/tipo-area-ocupacion',ensureAuth, ensureAdmin, crearTipoOcupacion);
-router.post('/aptitud',ensureAuth, ensureAdmin,crearAptitud);
+router.post('/aptitud', ensureAuth, ensureAdmin, crearAptitud);
 
 // Exportar el Router
 export default router;

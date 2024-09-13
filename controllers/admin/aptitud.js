@@ -41,7 +41,7 @@ export const crearAptitud =async (req, res)=> {
       // Crear el objeto de Aptitud y asignar la relación con el tipo área de ocupación
       let newAptitud = new Aptitud({
         nombre: params.nombre,
-        tipoAreaOcupacion: params.tipoAreaOcupacion, // Asignar el ObjectId del tipo área de ocupación
+        tipoAreaOcupacion: tipoAreaSeleccionada._id, // Asignar el ObjectId del tipo área de ocupación
         estado: params.estado !== undefined ? params.estado : true, // Manejar el estado si se envía o usar el valor por defecto
       });
 

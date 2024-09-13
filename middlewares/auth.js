@@ -15,7 +15,7 @@ export const ensureAuth = (req, res, next) => {
     }
 
     // Limpiar el token y quitar comillas si las hay
-    const token = req.headers.authorization.replace(/[ ' "]+/g, '');
+    const token = req.headers.authorization.replace(/[ ' "]+/g, '').replace("Bearer ", "");
 
     try {
         // Decodificar el token
@@ -46,9 +46,8 @@ export const ensureAuth = (req, res, next) => {
 // Middleware para asegurar que el usuario es un administrador
 export const ensureAdmin = async (req, res, next) => {
     try {
-        const userId = req.user.sub; // Suponiendo que el ID de usuario está en `req.user.sub`
+        const userId = req.user.userId; // Suponiendo que el ID de usuario está en `req.user.sub`
         const user = await UserRegister.findById(userId);
-
         if (!user || user.role !== 'ADMIN') {
             return res.status(403).send({
                 status: "error",
@@ -56,11 +55,12 @@ export const ensureAdmin = async (req, res, next) => {
             });
         }
 
-        next();
+       
     } catch (error) {
         return res.status(500).send({
             status: "error",
             message: "Error al verificar el rol del usuario"
         });
     }
+    next();
 };
