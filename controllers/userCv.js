@@ -23,8 +23,11 @@ export const createCV = async (req, res) => {
     // Verificar los parámetros recibidos
     let params= req.body;
 
+    console.log('Datos recibidos:', req.body);
+
+
     // Validar los campos requeridos
-    if (!params.tipo_documento || !params.numero_dto || !params.bio || !params.ocupacion || !params.region_residencia || !params.tiempo_experiencia || !params.area_ocupacion || !params.tipo_area_ocupacion || !params.aptitudes || params.aptitudes.length === 0) {
+    if (!params.tipo_documento || !params.numero_dto || !params.bio || !params.ocupacion || !params.certificaciones_experiencia ||!params.region_residencia || !params.tiempo_experiencia || !params.area_ocupacion || !params.tipo_area_ocupacion || !params.aptitudes || params.aptitudes.length === 0) {
       return res.status(400).json({ message: 'Faltan parámetros necesarios' });
     }
 
@@ -39,6 +42,9 @@ export const createCV = async (req, res) => {
     if (!tipoArea) {
       return res.status(404).json({ message: 'Tipo de área de ocupación no encontrado' });
     }
+
+    console.log("Area:", area);
+    console.log("Tipo de Área:", tipoArea);
 
     // Verificar que todas las aptitudes son válidas
     const aptitudesArray = await Aptitud.find({ _id: { $in: params.aptitudes } });
@@ -57,11 +63,11 @@ export const createCV = async (req, res) => {
       bio: params.bio,
       ocupacion: params.ocupacion,
       region_residencia: params.region_residencia,
-      tiempo_experiencia:params.tiempo_experiencia,
+      tiempo_experiencia: params.tiempo_experiencia,
       certificaciones_experiencia: params.certificaciones_experiencia || null,
-      AreaOcupacion,
-      TipoAreaOcupacion,
-      Aptitud
+      area_ocupacion: area._id, // Usar el nombre correcto del campo
+      tipo_area_ocupacion: tipoArea._id, // Usar el nombre correcto del campo
+      aptitudes: aptitudesArray.map((apt) => apt._id),
     });
 
     // Guardar en la base de datos

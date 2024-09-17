@@ -60,7 +60,6 @@ const userCVSchema = new Schema({
   certificaciones_experiencia: {
     type: String,
     maxlength: 60,
-    required: true,
     default: null
   },
   area_ocupacion: {
