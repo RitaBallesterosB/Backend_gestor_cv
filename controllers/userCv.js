@@ -52,16 +52,16 @@ export const createCV = async (req, res) => {
       segundo_nombre: params.segundo_nombre || null,
       segundo_apellido: params.segundo_apellido || null,
       celular: params.celular || null,
-      tipo_documento,
-      numero_dto,
-      bio,
-      ocupacion,
-      region_residencia,
-      tiempo_experiencia,
+      tipo_documento: params.tipo_documento,
+      numero_dto: params.numero_dto,
+      bio: params.bio,
+      ocupacion: params.ocupacion,
+      region_residencia: params.region_residencia,
+      tiempo_experiencia:params.tiempo_experiencia,
       certificaciones_experiencia: params.certificaciones_experiencia || null,
       AreaOcupacion,
       TipoAreaOcupacion,
-      aptitudes
+      Aptitud
     });
 
     // Guardar en la base de datos
