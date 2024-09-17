@@ -46,7 +46,7 @@ export const ensureAuth = (req, res, next) => {
 // Middleware para asegurar que el usuario es un administrador
 export const ensureAdmin = async (req, res, next) => {
     try {
-        const userId = req.user.userId; // Suponiendo que el ID de usuario está en `req.user.sub`
+        const userId = req.user.userId; //  el ID de usuario en userId
         const user = await UserRegister.findById(userId);
         if (!user || user.role !== 'ADMIN') {
             return res.status(403).send({

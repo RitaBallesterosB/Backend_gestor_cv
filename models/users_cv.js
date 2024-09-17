@@ -51,7 +51,7 @@ const userCVSchema = new Schema({
     type: String,
     maxlength: 120,
     required: true,
-    default: null
+   
   },
   tiempo_experiencia: {
     type: Number, // Número
