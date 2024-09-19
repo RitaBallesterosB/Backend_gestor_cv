@@ -29,7 +29,7 @@ connection();
  app.use(bodyParser.urlencoded ({extended: true}));
 
  //configurar rutas del aplicativo
- app.use('/api/users', UserRoutes);
+ app.use('/api/user', UserRoutes);
  app.use('/api/admin', AdminRoutes);
 
 
