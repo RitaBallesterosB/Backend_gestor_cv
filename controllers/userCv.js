@@ -4,6 +4,30 @@ import AreaOcupacion from '../models/area_ocupacion.js';
 import TipoAreaOcupacion from '../models/tipo_area_ocupacion.js';
 import Aptitud from '../models/aptitudes.js'; 
 
+
+// Controlador para precargar los datos del usuario registrado
+export const getUserDataForCV = async (req, res) => {
+  try {
+    const userId = req.user.userId; // Extraer el ID del usuario del token o sesión
+
+    // Buscar el usuario registrado en la base de datos por su ID
+    const user = await UserRegister.findById(userId).select('nombre apellido correo_electronico'); // Seleccionar solo los campos necesarios
+
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    // Devolver los datos del usuario al frontend para precargar el formulario
+    res.status(200).json({
+      status: 'success',
+      user // Los datos del usuario se envían para ser precargados en el formulario
+    });
+  } catch (error) {
+    console.error("Error al obtener datos del usuario:", error);
+    res.status(500).json({ message: 'Error al obtener los datos del usuario', error });
+  }
+};
+
 export const createCV = async (req, res) => {
   try {
     const userId = req.user.userId; // Extraer userId del token
@@ -68,6 +92,9 @@ export const createCV = async (req, res) => {
       area_ocupacion: area._id, // Usar el nombre correcto del campo
       tipo_area_ocupacion: tipoArea._id, // Usar el nombre correcto del campo
       aptitudes: aptitudesArray.map((apt) => apt._id),
+      nombre_usuario: user.nombre,  // Agregar los datos del usuario
+      apellido_usuario: user.apellido, // Agregar los datos del usuario
+      correo_usuario: user.correo_electronico // Agregar los datos del usuario
     });
 
     // Guardar en la base de datos

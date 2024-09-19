@@ -1,7 +1,7 @@
 import UserRegister from "../models/users_register.js";
 import bcrypt from "bcrypt"; // Para encriptar la contraseña
 import { createToken } from "../services/jwt.js";
-import jwt from 'jwt-simple';
+
 
 // Método Registro de Usuarios
 export const registerUser = async (req, res) => {
@@ -134,4 +134,25 @@ export const login = async (req, res) => {
   }
 }
 
+// Método para obtener los datos del usuario por su ID se requieren para precargar el formulario de la hoja de vida
+export const getUserData = async (req, res) => {
+  try {
+    const userId = req.user.userId; // Extraer el ID del usuario del token o sesión
 
+    // Buscar el usuario registrado en la base de datos por su ID
+    const user = await UserRegister.findById(userId).select('nombre apellido correo_electronico'); // Seleccionar solo los campos necesarios
+
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    // Devolver los datos del usuario al frontend
+    res.status(200).json({
+      status: 'success',
+      user
+    });
+  } catch (error) {
+    console.error("Error al obtener datos del usuario:", error);
+    res.status(500).json({ message: 'Error al obtener los datos del usuario', error });
+  }
+};

@@ -76,7 +76,19 @@ const userCVSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Aptitud',
     required: true
-  }]
+  }],
+  nombre_usuario: {
+    type: String,
+    required: true
+  },
+  apellido_usuario: {
+    type: String,
+    required: true
+  },
+  correo_usuario: {
+    type: String,
+    required: true
+  }
 });
 
 // Creación y exportación del modelo
