@@ -9,6 +9,19 @@ const userCVSchema = new Schema({
     ref: 'UserRegister',
     required: true
   },
+
+  nombre_usuario: {
+    type: String,
+    required: true
+  },
+  apellido_usuario: {
+    type: String,
+    required: true
+  },
+  correo_usuario: {
+    type: String,
+    required: true
+  },
   segundo_nombre: {
     type: String,
     maxlength: 100,
@@ -57,11 +70,7 @@ const userCVSchema = new Schema({
     type: Number, // Número
     required: true
   },
-  certificaciones_experiencia: {
-    type: String,
-    maxlength: 60,
-    default: null
-  },
+  
   area_ocupacion: {
     type: Schema.Types.ObjectId,
     ref: 'AreaOcupacion',
@@ -77,18 +86,12 @@ const userCVSchema = new Schema({
     ref: 'Aptitud',
     required: true
   }],
-  nombre_usuario: {
-    type: String,
-    required: true
-  },
-  apellido_usuario: {
-    type: String,
-    required: true
-  },
-  correo_usuario: {
-    type: String,
-    required: true
-  }
+  
+  certificaciones_experiencia: [{
+    type: String, // URL de la imagen
+    default: []
+  }],
+  
 });
 
 // Creación y exportación del modelo

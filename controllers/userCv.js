@@ -51,7 +51,7 @@ export const createCV = async (req, res) => {
 
 
     // Validar los campos requeridos
-    if (!params.tipo_documento || !params.numero_dto || !params.bio || !params.ocupacion || !params.certificaciones_experiencia ||!params.region_residencia || !params.tiempo_experiencia || !params.area_ocupacion || !params.tipo_area_ocupacion || !params.aptitudes || params.aptitudes.length === 0) {
+    if (!params.tipo_documento || !params.numero_dto || !params.bio || !params.ocupacion || !params.region_residencia || !params.tiempo_experiencia || !params.area_ocupacion || !params.tipo_area_ocupacion || !params.aptitudes || params.aptitudes.length === 0) {
       return res.status(400).json({ message: 'Faltan parámetros necesarios' });
     }
 
@@ -78,9 +78,12 @@ export const createCV = async (req, res) => {
 
     // Crear una nueva hoja de vida
     const newCV = new UserCV({
-      user_register_id: userId,
+      nombre_usuario: user.nombre,  // Agregar los datos del usuario
       segundo_nombre: params.segundo_nombre || null,
+      apellido_usuario: user.apellido, // Agregar los datos del usuario
       segundo_apellido: params.segundo_apellido || null,
+      correo_usuario: user.correo_electronico, // Agregar los datos del usuario
+      user_register_id: userId,
       celular: params.celular || null,
       tipo_documento: params.tipo_documento,
       numero_dto: params.numero_dto,
@@ -88,13 +91,11 @@ export const createCV = async (req, res) => {
       ocupacion: params.ocupacion,
       region_residencia: params.region_residencia,
       tiempo_experiencia: params.tiempo_experiencia,
-      certificaciones_experiencia: params.certificaciones_experiencia || null,
       area_ocupacion: area._id, // Usar el nombre correcto del campo
       tipo_area_ocupacion: tipoArea._id, // Usar el nombre correcto del campo
       aptitudes: aptitudesArray.map((apt) => apt._id),
-      nombre_usuario: user.nombre,  // Agregar los datos del usuario
-      apellido_usuario: user.apellido, // Agregar los datos del usuario
-      correo_usuario: user.correo_electronico // Agregar los datos del usuario
+      certificaciones_experiencia: params.certificaciones_experiencia || []
+      
     });
 
     // Guardar en la base de datos
