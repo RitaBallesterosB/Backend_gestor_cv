@@ -28,6 +28,7 @@ export const getUserDataForCV = async (req, res) => {
   }
 };
 
+// Método para crear la hoja de vida
 export const createCV = async (req, res) => {
   try {
     const userId = req.user.userId; // Extraer userId del token
@@ -105,5 +106,41 @@ export const createCV = async (req, res) => {
   } catch (error) {
     console.error("Error al crear CV:", error);
     res.status(500).json({ message: 'Error al registrar la hoja de vida', error });
+  }
+};
+
+
+
+// Método para obtener la hoja de vida del usuario
+export const getCVData = async (req, res) => {
+  try {
+    const userId = req.user.userId; // Extraer userId del token
+
+    // Buscar la hoja de vida asociada al usuario
+    const cvData = await UserCV.findOne({ user_register_id: userId })
+      .populate('area_ocupacion', 'nombre') // Populamos el área de ocupación
+      .populate('tipo_area_ocupacion', 'nombre') // Populamos el tipo de área de ocupación
+      .populate('aptitudes', 'nombre'); // Populamos las aptitudes
+
+    // Si no se encuentra una hoja de vida, retornar error
+    if (!cvData) {
+      return res.status(404).json({
+        status: "error",
+        message: "Hoja de vida no encontrada",
+      });
+    }
+
+    // Devolver los datos de la hoja de vida
+    return res.status(200).json({
+      status: "success",
+      cvData, // Datos de la hoja de vida se envían al frontend
+    });
+  } catch (error) {
+    // Manejo de errores
+    console.error("Error al obtener la hoja de vida:", error);
+    return res.status(500).json({
+      status: "error",
+      message: "Error al obtener la hoja de vida",
+    });
   }
 };
