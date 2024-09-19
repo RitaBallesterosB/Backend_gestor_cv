@@ -18,3 +18,6 @@ areaOcupacionSchema.index({ nombre: 1 }); // 1 para índice ascendente, -1 para 
 
 export default model('AreaOcupacion', areaOcupacionSchema, 'area_ocupacion');
 
+//"AreaOcupacion" nombre del modelo - lo uso para operaciones CRUD y cuando necesito el Object Id 
+// reaOcupacionSchema nombre del esquema
+// "area_ocupacion nombre de la colección en MongoDB

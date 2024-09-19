@@ -96,7 +96,8 @@ const userCVSchema = new Schema({
 
 // Creación y exportación del modelo
 export default model('UserCV', userCVSchema, 'users_cv');
-// "UserCV" nombre del modelo
+
+// "UserCV" nombre del modelo lo uso para operaciones CRUD y cuando necesito el Object Id 
 // userCVSchema nombre del esquema
 // "users_cv" nombre de la colección en MongoDB
 

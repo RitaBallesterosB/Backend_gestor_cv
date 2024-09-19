@@ -35,7 +35,7 @@ export const registerUser = async (req, res) => {
     const existingUserRegister = await UserRegister.findOne({
       correo_electronico: user_register.correo_electronico,
     });
-
+  
     // Si encuentra un usuario, devuelve un mensaje indicando que ya existe
     if (existingUserRegister) {
       return res.status(409).json({
@@ -134,25 +134,49 @@ export const login = async (req, res) => {
   }
 }
 
-// Método para obtener los datos del usuario por su ID se requieren para precargar el formulario de la hoja de vida
+// Método para obtener los datos del usuario por su ID se requieren para  mostrar el perfil 
 export const getUserData = async (req, res) => {
   try {
-    const userId = req.user.userId; // Extraer el ID del usuario del token o sesión
+    // Obtener el ID del usuario desde el token o sesión (si ya está implementado)
+    const userId = req.user.userId;
 
     // Buscar el usuario registrado en la base de datos por su ID
-    const user = await UserRegister.findById(userId).select('nombre apellido correo_electronico'); // Seleccionar solo los campos necesarios
+    const user = await UserRegister.findById(userId).select('nombre apellido correo_electronico');
 
     if (!user) {
-      return res.status(404).json({ message: 'Usuario no encontrado' });
+      return res.status(404).json({ 
+        status: 'error',
+        message: 'Usuario no encontrado' 
+      });
     }
 
-    // Devolver los datos del usuario al frontend
-    res.status(200).json({
+    // Procesar las iniciales (tomamos la primera letra del nombre y apellido)
+    const getInitials = (nombre, apellido) => {
+      const firstInitial = nombre.charAt(0).toUpperCase();
+      const lastInitial = apellido.charAt(0).toUpperCase();
+      return firstInitial + lastInitial;
+    };
+
+    const initials = getInitials(user.nombre, user.apellido);
+
+    // Devolver los datos del usuario junto con las iniciales
+    return res.status(200).json({
       status: 'success',
-      user
+      user: {
+        nombre: user.nombre,
+        apellido: user.apellido,
+        correo_electronico: user.correo_electronico,
+        initials: initials // Agregamos las iniciales al objeto de respuesta
+      }
     });
   } catch (error) {
     console.error("Error al obtener datos del usuario:", error);
-    res.status(500).json({ message: 'Error al obtener los datos del usuario', error });
+    return res.status(500).json({ 
+      status: 'error',
+      message: 'Error al obtener los datos del usuario' 
+    });
   }
 };
+
+
+

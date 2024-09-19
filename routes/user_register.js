@@ -16,7 +16,7 @@ router.post('/hoja-de-vida',ensureAuth, createCV);
 // Ruta para obtener los datos básicos del usuario (para precargar datos del formulario de registro)
 router.get('/user-data', ensureAuth, getUserData);
 
-// Ruta para obtener los datos específicos del usuario para la hoja de vida (para precargar datos del formulario de hoja de vida)
+// Ruta para obtener los datos específicos del usuario y cargar el perfil con sus iniciales
 router.get('/user-data-cv', ensureAuth, getUserDataForCV);
 
 

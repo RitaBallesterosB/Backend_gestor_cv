@@ -24,3 +24,7 @@ tipoAreaOcupacionSchema.index({ nombre: 1 }); // 1 para índice ascendente
 ;
 
 export default model("TipoAreaOcupacion", tipoAreaOcupacionSchema,"tipo_area_ocupacion") ;
+
+//"TipoAreaOcupacion" nombre del modelo lo uso para operaciones CRUD y cuando necesito el Object Id 
+// tipoAreaOcupacionSchema nombre del esquema
+// "tipo_area_ocupacion nombre de la colección en MongoDB

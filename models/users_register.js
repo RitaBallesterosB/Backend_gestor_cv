@@ -41,7 +41,7 @@ const userRegisterSchema = Schema({
 
 // Crea el modelo a partir del esquema
 export default model('UserRegister', userRegisterSchema, 'users_register');
-//"UserRegister" nombre del modelo
+//"UserRegister" nombre del modelolo uso para operaciones CRUD y cuando necesito el Object Id 
 // UserSchema nombre del esquema
 // "users_register nombre de la colección en MongoDB"
 

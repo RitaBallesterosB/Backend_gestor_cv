@@ -25,3 +25,7 @@ aptitudSchema.index({ nombre: 1 }); // Índice ascendente en el campo 'nombre'
 // Crear y exportar el modelo
 
 export default model('Aptitud', aptitudSchema, 'aptitudes'); 
+
+//"Aptitud" nombre del modelolo uso para operaciones CRUD y cuando necesito el Object Id 
+// aptitudSchema nombre del esquema
+// "users_register nombre de la colección en MongoDB
