@@ -21,7 +21,7 @@ connection();
 
  app.use(cors({
     origin: '*',
-    methods: 'GET, HEAD, PUT, POST PATCH, DELETE'
+    methods: 'GET, HEAD, PUT, POST, PATCH, DELETE'
  }));
 
  // Decodificar los datos desde los fromularios para convertirlos en objetos JS

@@ -3,6 +3,7 @@ import UserRegister from '../models/users_register.js';
 import AreaOcupacion from '../models/area_ocupacion.js';
 import TipoAreaOcupacion from '../models/tipo_area_ocupacion.js';
 import Aptitud from '../models/aptitudes.js'; 
+import path from 'path';
 
 
 // Controlador para precargar los datos del usuario registrado
@@ -268,3 +269,47 @@ export const reactivateCV = async (req, res) => {
   }
 };
 
+
+// Método para manejar la carga de archivos y actualizar la hoja de vida
+export const uploadCertifications = async (req, res) => {
+  try {
+    // Si no hay archivos en req.files
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({
+        status: "error",
+        message: "No se han cargado archivos."
+      });
+    }
+
+    // Extrae el userId del token
+    const userId = req.user.userId;
+
+    // Busca la hoja de vida del usuario
+    const userCV = await UserCV.findOne({ user_register_id: userId });
+
+    if (!userCV) {
+      return res.status(404).json({
+        status: "error",
+        message: "Hoja de vida no encontrada"
+      });
+    }
+
+    // Actualiza el campo de certificaciones de experiencia
+    userCV.certificaciones_experiencia = req.files.map(file => file.path);
+
+    // Guarda los cambios en la base de datos
+    await userCV.save();
+
+    return res.status(200).json({
+      status: "success",
+      message: "Certificaciones actualizadas exitosamente",
+      data: userCV
+    });
+  } catch (error) {
+    console.error("Error al cargar las certificaciones:", error);
+    return res.status(500).json({
+      status: "error",
+      message: "Error al cargar las certificaciones"
+    });
+  }
+};
