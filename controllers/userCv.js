@@ -117,16 +117,19 @@ export const getCVData = async (req, res) => {
     const userId = req.user.userId; // Extraer userId del token
 
     // Buscar la hoja de vida asociada al usuario
-    const cvData = await UserCV.findOne({ user_register_id: userId })
-      .populate('area_ocupacion', 'nombre') // Populamos el área de ocupación
+    const cvData = await UserCV.findOne({ 
+      user_register_id: userId,
+      estado: true // Filtrar solo las hojas de vida activas
+     })
+      .populate('area_ocupacion', 'nombre') // Populamos el área de ocupación por la referencia a otro campo con relación a otro documento
       .populate('tipo_area_ocupacion', 'nombre') // Populamos el tipo de área de ocupación
       .populate('aptitudes', 'nombre'); // Populamos las aptitudes
 
-    // Si no se encuentra una hoja de vida, retornar error
+    // Si no se encuentra una hoja de vida ACTIVA, retornar error
     if (!cvData) {
       return res.status(404).json({
         status: "error",
-        message: "Hoja de vida no encontrada",
+        message: "Hoja de vida no encontrada o inactiva",
       });
     }
 
@@ -207,3 +210,58 @@ export const updateCV = async (req, res) => {
     res.status(500).json({ message: 'Error al actualizar la hoja de vida', error });
   }
 };
+
+// Método para (inactivar CV, ya que queda en la DB la hoja de vida)
+export const deactivateCV = async (req, res) => {
+  try {
+    const userId = req.user.userId; // Extraer userId del token
+
+    // Buscar la hoja de vida del usuario
+    const userCV = await UserCV.findOne({ user_register_id: userId });
+    if (!userCV) {
+      return res.status(404).json({ message: 'Hoja de vida no encontrada' });
+    }
+    //Borrar para el deploy
+    console.log("Desactivando CV para el usuario:", userId)
+
+
+    // Inactivar la hoja de vida
+    userCV.estado = false;
+    await userCV.save();
+
+    console.log("Hoja de vida inactivada:", userCV.estado);
+
+    res.status(200).json({ message: 'Hoja de vida inactivada exitosamente' });
+  } catch (error) {
+    console.error("Error al inactivar la hoja de vida:", error);
+    res.status(500).json({ message: 'Error al inactivar la hoja de vida', error });
+  }
+};
+
+// Método para reactivar la hoja de vida
+export const reactivateCV = async (req, res) => {
+  try {
+    const userId = req.user.userId; // Extraer userId del token
+
+    // Buscar la hoja de vida del usuario
+    const userCV = await UserCV.findOne({ user_register_id: userId });
+    if (!userCV) {
+      return res.status(404).json({ message: 'Hoja de vida no encontrada' });
+    }
+
+    // Verificar si ya está activa
+    if (userCV.estado) {
+      return res.status(400).json({ message: 'La hoja de vida ya está activa' });
+    }
+
+    // Reactivar la hoja de vida
+    userCV.estado = true;
+    await userCV.save();
+
+    res.status(200).json({ message: 'Hoja de vida reactivada exitosamente' });
+  } catch (error) {
+    console.error("Error al reactivar la hoja de vida:", error);
+    res.status(500).json({ message: 'Error al reactivar la hoja de vida', error });
+  }
+};
+

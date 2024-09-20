@@ -140,7 +140,7 @@ export const getUserData = async (req, res) => {
     // Obtener el ID del usuario desde el token o sesión (si ya está implementado)
     const userId = req.user.userId;
 
-    // Buscar el usuario registrado en la base de datos por su ID
+    // Buscar el usuario registrado en la base de datos por su ID y mostramos sólo los datos que queremos mostrar
     const user = await UserRegister.findById(userId).select('nombre apellido correo_electronico');
 
     if (!user) {

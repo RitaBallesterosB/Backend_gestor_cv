@@ -2,7 +2,7 @@ import { Router } from "express";
 const router = Router();
 import { ensureAuth } from '../middlewares/auth.js';
 import { registerUser, login, getUserData } from '../controllers/user_register.js';
-import { createCV, getUserDataForCV,getCVData,updateCV } from "../controllers/userCv.js";
+import { createCV, getUserDataForCV,getCVData,updateCV,deactivateCV,reactivateCV } from "../controllers/userCv.js";
 
 
 
@@ -24,6 +24,11 @@ router.get('/ver-cv-registrado', ensureAuth, getCVData);
 
 //Ruta para actualizar datos registrados de la hoja de vida del usuario
 router.put('/modificar-cv', ensureAuth, updateCV);
+
+// Ruta para inactivar- eliminar la hoja de vida
+router.post('/desactivar-cv', ensureAuth, deactivateCV);
+// Ruta para reactivar la hoja de vida
+router.post('/reactivar-cv', ensureAuth, reactivateCV);
 
 // Exportar el Router
 export default router;

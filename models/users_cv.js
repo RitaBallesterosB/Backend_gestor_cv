@@ -92,6 +92,10 @@ const userCVSchema = new Schema({
     default: []
   }],
   
+  estado: {
+    type: Boolean,
+    default: true}
+  
 });
 
 // Creación y exportación del modelo
