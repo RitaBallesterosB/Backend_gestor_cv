@@ -155,7 +155,10 @@ export const updateCV = async (req, res) => {
     const params = req.body; // Obtener los parámetros de la solicitud
 
     // Buscar la hoja de vida del usuario
-    const cv = await UserCV.findOne({ user_register_id: userId });
+    const cv = await UserCV.findOne({ 
+      user_register_id: userId,
+      estado: true // Filtrar solo las hojas de vida activas
+     });
     if (!cv) {
       return res.status(404).json({ message: 'Hoja de vida no encontrada' });
     }
