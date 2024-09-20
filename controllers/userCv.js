@@ -144,3 +144,66 @@ export const getCVData = async (req, res) => {
     });
   }
 };
+
+// Método para actualizar la hoja de vida del usuario
+export const updateCV = async (req, res) => {
+  try {
+    const userId = req.user.userId; // Obtener el ID del usuario del token
+    const params = req.body; // Obtener los parámetros de la solicitud
+
+    // Buscar la hoja de vida del usuario
+    const cv = await UserCV.findOne({ user_register_id: userId });
+    if (!cv) {
+      return res.status(404).json({ message: 'Hoja de vida no encontrada' });
+    }
+
+    // Variable para verificar si hay cambios
+    let isChanged = false;
+
+    // Actualizar los campos permitidos y verificar cambios
+    if (params.celular) {
+      cv.celular = params.celular;
+      isChanged = true;
+    }
+    if (params.bio) {
+      cv.bio = params.bio;
+      isChanged = true;
+    }
+    if (params.ocupacion) {
+      cv.ocupacion = params.ocupacion;
+      isChanged = true;
+    }
+    if (params.region_residencia) {
+      cv.region_residencia = params.region_residencia;
+      isChanged = true;
+    }
+    if (params.tiempo_experiencia) {
+      cv.tiempo_experiencia = params.tiempo_experiencia;
+      isChanged = true;
+    }
+    if (params.area_ocupacion) {
+      cv.area_ocupacion = params.area_ocupacion;
+      isChanged = true;
+    }
+    if (params.tipo_area_ocupacion) {
+      cv.tipo_area_ocupacion = params.tipo_area_ocupacion;
+      isChanged = true;
+    }
+    if (params.certificaciones_experiencia) {
+      cv.certificaciones_experiencia = params.certificaciones_experiencia;
+      isChanged = true;
+    }
+
+    // Verificar si no hubo cambios
+    if (!isChanged) {
+      return res.status(400).json({ message: 'No se realizaron cambios en la hoja de vida' });
+    }
+
+    // Guardar los cambios
+    const updatedCV = await cv.save();
+    res.status(200).json({ message: 'Hoja de vida actualizada', cv: updatedCV });
+  } catch (error) {
+    console.error("Error al actualizar la hoja de vida:", error);
+    res.status(500).json({ message: 'Error al actualizar la hoja de vida', error });
+  }
+};
