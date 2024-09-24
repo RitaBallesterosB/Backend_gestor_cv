@@ -8,41 +8,56 @@ export const registerUser = async (req, res) => {
   try {
     // Obtener los datos de la petición
     let params = req.body;
+    
+    // Borrar en el deploy
+
+    console.log("Datos recibidos:", params);
+
 
     // Validación de los datos obtenidos
     if (
       !params.nombre ||
       !params.apellido ||
       !params.correo_electronico ||
-      !params.password
-    ) {
+      !params.password ||
+      !req.file 
+    )
+     {
       return res.status(400).send({
         status: "error",
         message: "Todos los campos son requeridos.",
       });
+      
     }
 
-    // Crear el objeto de usuario con los datos que ya validamos
-    let user_register = new UserRegister({
-      nombre: params.nombre,
-      apellido: params.apellido,
-      correo_electronico: params.correo_electronico.toLowerCase(),
-      password: params.password,
-      role:params.role || 'usuario' // Asigna 'usuario' por defecto
-    });
-
+  
     // Busca si ya existe un usuario con el mismo correo electrónico
     const existingUserRegister = await UserRegister.findOne({
       correo_electronico: user_register.correo_electronico,
     });
   
-    // Si encuentra un usuario, devuelve un mensaje indicando que ya existe
+    // Si encuentra un usuario, valida si ya tiene una imagen de perfil
     if (existingUserRegister) {
-      return res.status(409).json({
-        status: "error",
-        message: "¡El usuario ya existe!",
-      });
+      if (existingUserRegister.imagen_perfil) {
+        return res.status(409).json({
+          status: "error",
+          message: "¡El usuario ya tiene una imagen de perfil registrada!",
+        });
+      } else {
+        // Si no tiene imagen, se puede continuar con el registro
+      }
     }
+
+      // Crear el objeto de usuario con los datos que ya validamos
+      let user_register = new UserRegister({
+        nombre: params.nombre,
+        apellido: params.apellido,
+        correo_electronico: params.correo_electronico.toLowerCase(),
+        password: params.password,
+        role:params.role || 'usuario', // Asigna 'usuario' por defecto
+        imagen_perfil: req.file.path // Guarda la ruta de la imagen de perfil
+      });
+  
 
     // Encriptar la contraseña
     const salt = await bcrypt.genSalt(10); // Genera una salt para cifrar la contraseña
@@ -76,7 +91,9 @@ export const login = async (req, res) => {
     let params = req.body;
 
     // Validar parámetros: orreo_electronico, password
-    if (!params.correo_electronico || !params.password) {
+    if (!params.correo_electronico
+       || !params.password ) // 
+       {
       return res.status(400).send({
         status: "error",
         message: "Faltan datos por enviar"
@@ -117,9 +134,10 @@ export const login = async (req, res) => {
         id: user._id,
         nombre: user.nombre,
         apellido: user.apellido,
-        correo_electronico: user.correo_electronico,
+        correo_electronico: user.correo_electronico, 
+        role: user.role, // Incluir el rol en la respuesta
+        imagen_perfil: user.imagen_perfil,
         created_at: user.created_at,
-        role: user.role // Incluir el rol en la respuesta
       }
     });
 
@@ -134,14 +152,14 @@ export const login = async (req, res) => {
   }
 }
 
-// Método para obtener los datos del usuario por su ID se requieren para  mostrar el perfil 
+// Método para obtener los datos del usuario por su ID se requieren para  mostrar el perfil y la imagen
 export const getUserData = async (req, res) => {
   try {
     // Obtener el ID del usuario desde el token o sesión (si ya está implementado)
     const userId = req.user.userId;
 
     // Buscar el usuario registrado en la base de datos por su ID y mostramos sólo los datos que queremos mostrar
-    const user = await UserRegister.findById(userId).select('nombre apellido correo_electronico');
+    const user = await UserRegister.findById(userId).select('nombre apellido correo_electronico imagen_perfil');
 
     if (!user) {
       return res.status(404).json({ 
@@ -159,13 +177,14 @@ export const getUserData = async (req, res) => {
 
     const initials = getInitials(user.nombre, user.apellido);
 
-    // Devolver los datos del usuario junto con las iniciales
+    // Devolver los datos del usuario junto con las iniciales y la imagen de perfil
     return res.status(200).json({
       status: 'success',
       user: {
         nombre: user.nombre,
         apellido: user.apellido,
         correo_electronico: user.correo_electronico,
+        imagen_perfil: user.imagen_perfil, // Agregamos la ruta de la imagen de perfil
         initials: initials // Agregamos las iniciales al objeto de respuesta
       }
     });

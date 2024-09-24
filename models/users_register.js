@@ -36,6 +36,11 @@ const userRegisterSchema = Schema({
     type: String,
     enum: ['usuario', 'ADMIN'],
     default: 'usuario' // Valor por defecto
+  },
+  imagen_perfil: {
+    type: String,
+    required: true,
+    default: "default.png"
   }
 });
 
