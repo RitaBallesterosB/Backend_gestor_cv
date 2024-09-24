@@ -30,6 +30,17 @@ export const registerUser = async (req, res) => {
       
     }
 
+
+     // Crear el objeto de usuario con los datos que ya validamos
+     let user_register = new UserRegister({
+      nombre: params.nombre,
+      apellido: params.apellido,
+      correo_electronico: params.correo_electronico.toLowerCase(),
+      password: params.password,
+      role:params.role || 'usuario', // Asigna 'usuario' por defecto
+      imagen_perfil: req.file.path // Guarda la ruta de la imagen de perfil
+    });
+    
   
     // Busca si ya existe un usuario con el mismo correo electrónico
     const existingUserRegister = await UserRegister.findOne({
@@ -48,15 +59,7 @@ export const registerUser = async (req, res) => {
       }
     }
 
-      // Crear el objeto de usuario con los datos que ya validamos
-      let user_register = new UserRegister({
-        nombre: params.nombre,
-        apellido: params.apellido,
-        correo_electronico: params.correo_electronico.toLowerCase(),
-        password: params.password,
-        role:params.role || 'usuario', // Asigna 'usuario' por defecto
-        imagen_perfil: req.file.path // Guarda la ruta de la imagen de perfil
-      });
+     
   
 
     // Encriptar la contraseña

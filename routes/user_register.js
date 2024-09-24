@@ -40,7 +40,7 @@ router.get('/ver-cv-registrado', ensureAuth, getCVData);
 router.put('/modificar-cv', ensureAuth, updateCV);
 
 // Ruta para inactivar- eliminar la hoja de vida
-router.post('/de-cv', ensureAuth, deactivateCV);
+router.post('/desactivar-cv', ensureAuth, deactivateCV);
 
 // Ruta para reactivar la hoja de vida
 router.post('/reactivar-cv', ensureAuth, reactivateCV);
