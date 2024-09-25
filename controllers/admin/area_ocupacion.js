@@ -1,5 +1,7 @@
 import AreaOcupacion from '../../models/area_ocupacion.js';
 
+
+
 // Método para crear un área de ocupación
 
 export const crearOcupacion =async (req, res)=> {
@@ -56,3 +58,9 @@ export const crearOcupacion =async (req, res)=> {
 
 
 }
+
+
+
+
+
+

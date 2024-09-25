@@ -3,7 +3,7 @@ import multer from 'multer';
 const router = Router();
 import { ensureAuth } from '../middlewares/auth.js';
 import { registerUser, login, getUserData } from '../controllers/user_register.js';
-import { createCV, getUserDataForCV,getCVData,updateCV,deactivateCV,reactivateCV, } from "../controllers/userCv.js";
+import { createCV, getUserDataForCV,getCVData,updateCV,deactivateCV,reactivateCV,getAreaOcupacionData, } from "../controllers/userCv.js";
 
 // Configuración de multer para almacenar archivos subidos
 const storage = multer.diskStorage({
@@ -44,6 +44,9 @@ router.post('/desactivar-cv', ensureAuth, deactivateCV);
 
 // Ruta para reactivar la hoja de vida
 router.post('/reactivar-cv', ensureAuth, reactivateCV);
+
+// Ruta para obtener los datos de áreas de ocupación
+router.get('/get-areas-ocupacion', ensureAuth, getAreaOcupacionData); 
 
 
 

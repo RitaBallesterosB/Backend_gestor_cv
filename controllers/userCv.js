@@ -269,47 +269,55 @@ export const reactivateCV = async (req, res) => {
   }
 };
 
-
-// Método para manejar la carga de archivos y actualizar la hoja de vida
-export const uploadCertifications = async (req, res) => {
+// Método para obtener las áreas de ocupación junto con sus tipos y aptitudes
+export const getAreaOcupacionData = async (req, res) => {
   try {
-    // Si no hay archivos en req.files
-    if (!req.files || req.files.length === 0) {
-      return res.status(400).json({
-        status: "error",
-        message: "No se han cargado archivos."
-      });
-    }
+    const areasOcupacion = await AreaOcupacion.find({ estado: true }).select('_id nombre');
 
-    // Extrae el userId del token
-    const userId = req.user.userId;
+    // Utilizamos `Promise.all` para esperar a que todas las promesas se resuelvan
+    const areasOcupacionData = await Promise.all(
+      areasOcupacion.map(async (area) => {
+        // Buscar los tipos de áreas de ocupación relacionados con el área actual
+        const tiposOcupacion = await TipoAreaOcupacion.find({
+          areaOcupacion: area._id,
+          estado: true
+        }).select('_id nombre');
 
-    // Busca la hoja de vida del usuario
-    const userCV = await UserCV.findOne({ user_register_id: userId });
+        // Para cada tipo de ocupación, obtenemos las aptitudes
+        const tiposData = await Promise.all(
+          tiposOcupacion.map(async (tipo) => {
+            const aptitudes = await Aptitud.find({
+              tipoAreaOcupacion: tipo._id,
+              estado: true
+            }).select('_id nombre');
+            
+            return {
+              tipoAreaOcupacionId: tipo._id,
+              nombre: tipo.nombre,
+              aptitudes: aptitudes
+            };
+          })
+        );
 
-    if (!userCV) {
-      return res.status(404).json({
-        status: "error",
-        message: "Hoja de vida no encontrada"
-      });
-    }
+        // Retornamos el área de ocupación con los tipos y aptitudes correspondientes
+        return {
+          areaOcupacionId: area._id,
+          nombre: area.nombre,
+          tiposOcupacion: tiposData
+        };
+      })
+    );
 
-    // Actualiza el campo de certificaciones de experiencia
-    userCV.certificaciones_experiencia = req.files.map(file => file.path);
-
-    // Guarda los cambios en la base de datos
-    await userCV.save();
-
+    // Devolver la respuesta con éxito
     return res.status(200).json({
-      status: "success",
-      message: "Certificaciones actualizadas exitosamente",
-      data: userCV
+      status: 'success',
+      areasOcupacion: areasOcupacionData
     });
   } catch (error) {
-    console.error("Error al cargar las certificaciones:", error);
+    console.error("Error al obtener las áreas de ocupación:", error);
     return res.status(500).json({
-      status: "error",
-      message: "Error al cargar las certificaciones"
+      status: 'error',
+      message: 'Error al obtener las áreas de ocupación'
     });
   }
 };
