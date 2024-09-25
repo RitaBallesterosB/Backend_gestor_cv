@@ -9,10 +9,6 @@ export const registerUser = async (req, res) => {
     // Obtener los datos de la petición
     let params = req.body;
     
-    // Borrar en el deploy
-
-    console.log("Datos recibidos:", params);
-
 
     // Validación de los datos obtenidos
     if (
@@ -55,7 +51,7 @@ export const registerUser = async (req, res) => {
           message: "¡El usuario ya tiene una imagen de perfil registrada!",
         });
       } else {
-        // Si no tiene imagen, se puede continuar con el registro
+      //   // Si no tiene imagen, se puede continuar con el registro
       }
     }
 

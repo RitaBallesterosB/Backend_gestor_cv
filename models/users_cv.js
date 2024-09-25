@@ -87,10 +87,10 @@ const userCVSchema = new Schema({
     required: true
   }],
   
-  certificaciones_experiencia: [{
-    type: String, // URL de la imagen
-    default: []
-  }],
+  // certificaciones_experiencia: [{
+  //   type: String, // URL de la imagen
+  //   default: []
+  // }],
   
   estado: {
     type: Boolean,
