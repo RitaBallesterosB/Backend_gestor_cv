@@ -130,15 +130,19 @@ export const getCVData = async (req, res) => {
     if (!cvData) {
       return res.status(404).json({
         status: "error",
-        message: "Hoja de vida no encontrada o inactiva",
+        message: "Hoja de vida no encontrada ",
       });
     }
 
-    // Devolver los datos de la hoja de vida
-    return res.status(200).json({
+     // Devolver los datos de la hoja de vida junto con el estado
+     return res.status(200).json({
       status: "success",
-      cvData, // Datos de la hoja de vida se envían al frontend
+      cvData: {
+        ...cvData.toObject(), // Convierte el documento a un objeto JavaScript
+        estado: cvData.estado // Asegúrate de incluir el estado aquí
+      }, 
     });
+    
   } catch (error) {
     // Manejo de errores
     console.error("Error al obtener la hoja de vida:", error);
