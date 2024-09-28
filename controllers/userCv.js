@@ -192,16 +192,18 @@ export const updateCV = async (req, res) => {
       cv.tiempo_experiencia = params.tiempo_experiencia;
       isChanged = true;
     }
+    // Asegurar de que solo se asignen los ObjectId
     if (params.area_ocupacion) {
-      cv.area_ocupacion = params.area_ocupacion;
+      cv.area_ocupacion = params.area_ocupacion.areaOcupacionId; // Solo el ID
       isChanged = true;
     }
     if (params.tipo_area_ocupacion) {
-      cv.tipo_area_ocupacion = params.tipo_area_ocupacion;
+      cv.tipo_area_ocupacion = params.tipo_area_ocupacion.tipoAreaOcupacionId; // Solo el ID
       isChanged = true;
     }
     if (params.aptitudes) {
-      cv.aptitudes = params.aptitudes;
+      // Extraer solo los IDs de las aptitudes
+      cv.aptitudes = params.aptitudes.map(aptitud => aptitud._id); // Cambia `_id` según el campo correcto en la solicitud
       isChanged = true;
     }
     // if (params.certificaciones_experiencia) {
