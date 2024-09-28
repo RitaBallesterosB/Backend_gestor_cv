@@ -200,10 +200,14 @@ export const updateCV = async (req, res) => {
       cv.tipo_area_ocupacion = params.tipo_area_ocupacion;
       isChanged = true;
     }
-    if (params.certificaciones_experiencia) {
-      cv.certificaciones_experiencia = params.certificaciones_experiencia;
+    if (params.aptitudes) {
+      cv.aptitudes = params.aptitudes;
       isChanged = true;
     }
+    // if (params.certificaciones_experiencia) {
+    //   cv.certificaciones_experiencia = params.certificaciones_experiencia;
+    //   isChanged = true;
+    // }
 
     // Verificar si no hubo cambios
     if (!isChanged) {
