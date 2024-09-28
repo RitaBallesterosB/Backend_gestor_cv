@@ -1,6 +1,7 @@
 import UserRegister from "../models/users_register.js";
 import bcrypt from "bcrypt"; // Para encriptar la contraseña
 import { createToken } from "../services/jwt.js";
+import UserCV from '../models/users_cv.js'; 
 
 
 // Método Registro de Usuarios
@@ -89,7 +90,7 @@ export const login = async (req, res) => {
     // Obtener los parámetros del body
     let params = req.body;
 
-    // Validar parámetros: orreo_electronico, password
+    // Validar parámetros: correo_electronico, password
     if (!params.correo_electronico
        || !params.password ) // 
        {
@@ -121,6 +122,12 @@ export const login = async (req, res) => {
       });
     }
 
+ // Verificar si el usuario tiene una hoja de vida registrada
+
+ const userCV = await UserCV.findOne({ user_register_id: user._id });
+
+
+
     // Generar token JWT
     const token = createToken(user);
 
@@ -137,6 +144,7 @@ export const login = async (req, res) => {
         role: user.role, // Incluir el rol en la respuesta
         imagen_perfil: user.imagen_perfil,
         created_at: user.created_at,
+        hasCV: !!userCV,  // Indicar si tiene una hoja de vida registrada
       }
     });
 
