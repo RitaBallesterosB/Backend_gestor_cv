@@ -120,7 +120,6 @@ export const getCVData = async (req, res) => {
     // Buscar la hoja de vida asociada al usuario
     const cvData = await UserCV.findOne({ 
       user_register_id: userId,
-      estado: true // Filtrar solo las hojas de vida activas
      })
       .populate('area_ocupacion', 'nombre') // Populamos el área de ocupación por la referencia a otro campo con relación a otro documento
       .populate('tipo_area_ocupacion', 'nombre') // Populamos el tipo de área de ocupación
