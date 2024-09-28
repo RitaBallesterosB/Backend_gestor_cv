@@ -7,72 +7,71 @@ import Aptitud from '../../models/aptitudes.js';
 
 
 
-
-
-
 // Método para buscar hojas de vida
 export const searchCV = async (req, res) => {
     try {
-      const {
-        nombre,
-        apellidos,
-        email,
-        area_ocupacion,
-        tipo_area_ocupacion,
-        aptitudes,
-        region_residencia,
-        numero_documento,
-        tiempo_experiencia = null // Asignar un valor predeterminado
-      } = req.body;
+        const {
+            area_ocupacion,
+            tipo_area_ocupacion,
+            palabra_clave, // Parámetro para buscar por palabra clave
+            region_residencia // Nuevo parámetro para buscar por región de residencia
+        } = req.body;
 
-      // Log para verificar los parámetros recibidos
-      console.log("Parámetros de búsqueda:", req.body);
+        console.log("Parámetros de búsqueda:", req.body);
 
-      // Construir la consulta
-      const query = {};
-      if (nombre) query.nombre_usuario = { $regex: nombre, $options: "i" }; // Campo: nombre_usuario
-      if (apellidos)
-        query.apellido_usuario = { $regex: apellidos, $options: "i" }; // Campo: apellido_usuario
-      if (email) query.correo_usuario = { $regex: email, $options: "i" }; // Campo: correo_usuario
-      if (region_residencia)
-        query.region_residencia = { $regex: region_residencia, $options: "i" }; // Campo: region_residencia
-      if (numero_documento) query.numero_dto = numero_documento; // Campo: numero_dto
+        // Inicializar la consulta
+        const query = {};
 
-      // Convertir area_ocupacion a ObjectId
-      if (area_ocupacion) {
-        query.area_ocupacion = new mongoose.Types.ObjectId(area_ocupacion);
-      }
+        // Agregar filtro por área de ocupación
+        if (area_ocupacion) {
+            query.area_ocupacion = new mongoose.Types.ObjectId(area_ocupacion);
+        }
 
-      // Convertir tipo_area_ocupacion a ObjectId
-      if (tipo_area_ocupacion) {
-        query.tipo_area_ocupacion =
-          new mongoose.Types.ObjectId(tipo_area_ocupacion);
-      }
+        // Agregar filtro por tipo de área de ocupación
+        if (tipo_area_ocupacion) {
+            query.tipo_area_ocupacion = new mongoose.Types.ObjectId(tipo_area_ocupacion);
+        }
 
-      // Convertir aptitudes a ObjectIds
-      if (aptitudes && aptitudes.length > 0) {
-        query.aptitudes = {
-          $in: aptitudes.map((id) => new mongoose.Types.ObjectId(id)),
-        };
-      }
+        // Agregar filtro por región de residencia
+        if (region_residencia) {
+            query.region_residencia = { $regex: new RegExp(`^${region_residencia}$`, 'i') }; // 'i' para ignorar mayúsculas/minúsculas
+        }
+        
 
-      // Agregar filtro por tiempo de experiencia si es necesario
-      if (tiempo_experiencia) {
-        query.tiempo_experiencia = tiempo_experiencia; // Suponiendo que este campo existe
-    }
+        // Agregar búsqueda por palabra clave en varios campos
+        if (palabra_clave) {
+            // Obtener los IDs de aptitudes que coinciden con la palabra clave
+            const aptitudesIds = await Aptitud.find({ nombre: { $regex: palabra_clave, $options: 'i' } })
+                                                .then(aptitudes => aptitudes.map(apt => apt._id));
+            
+           query.$or = [
+        { nombre_usuario: { $regex: new RegExp(`^${palabra_clave}$`, 'i') } },
+        { apellido_usuario: { $regex: new RegExp(`^${palabra_clave}$`, 'i') } },
+        { correo_usuario: { $regex: new RegExp(`^${palabra_clave}$`, 'i') } },
+        { region_residencia: { $regex: new RegExp(`^${palabra_clave}$`, 'i') } },
+        { bio: { $regex: new RegExp(`^${palabra_clave}$`, 'i') } }, // Búsqueda en bio
+        { ocupacion: { $regex: new RegExp(`^${palabra_clave}$`, 'i') } }, // Búsqueda en ocupación
+        { aptitudes: { $in: aptitudesIds } }, // Buscar en ObjectIds de aptitudes
+    ];
+        }
 
-      console.log("Consulta construida:", query);
+        console.log("Consulta construida:", query);
 
-      // Ejecutar la búsqueda
-      const results = await UserCv.find(query).populate(
-        "area_ocupacion tipo_area_ocupacion aptitudes"
-      );
-      res.status(200).json({ status: "success", results });
+        // Ejecutar la búsqueda
+        const results = await UserCv.find(query).populate(
+            "area_ocupacion tipo_area_ocupacion aptitudes"
+        );
+
+        res.status(200).json({ status: "success", results });
     } catch (error) {
         console.error("Error al buscar hojas de vida:", error);
         res.status(500).json({ message: 'Error al buscar hojas de vida', error });
     }
 };
+
+
+
+
 
 // Método para obtener la hoja de vida del usuario
 export const getCVDataHandler = async (req, res) => {
