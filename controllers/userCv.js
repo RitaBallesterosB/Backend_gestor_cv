@@ -3,7 +3,7 @@ import UserRegister from '../models/users_register.js';
 import AreaOcupacion from '../models/area_ocupacion.js';
 import TipoAreaOcupacion from '../models/tipo_area_ocupacion.js';
 import Aptitud from '../models/aptitudes.js'; 
-import path from 'path';
+
 
 
 // Controlador para precargar los datos del usuario registrado
