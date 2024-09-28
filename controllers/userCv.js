@@ -174,32 +174,32 @@ export const updateCV = async (req, res) => {
     // Actualizar los campos permitidos y verificar cambios
     if (params.celular) {
       cv.celular = params.celular;
-      isChanged = true;
+      isChanged = false;
     }
     if (params.bio) {
       cv.bio = params.bio;
-      isChanged = true;
+      isChanged = false;
     }
     if (params.ocupacion) {
       cv.ocupacion = params.ocupacion;
-      isChanged = true;
+      isChanged = false;
     }
     if (params.region_residencia) {
       cv.region_residencia = params.region_residencia;
-      isChanged = true;
+      isChanged = false;
     }
     if (params.tiempo_experiencia) {
       cv.tiempo_experiencia = params.tiempo_experiencia;
-      isChanged = true;
+      isChanged = false;
     }
     // Asegurar de que solo se asignen los ObjectId
     if (params.area_ocupacion) {
       cv.area_ocupacion = params.area_ocupacion.areaOcupacionId; // Solo el ID
-      isChanged = true;
+      isChanged = false;
     }
     if (params.tipo_area_ocupacion) {
       cv.tipo_area_ocupacion = params.tipo_area_ocupacion.tipoAreaOcupacionId; // Solo el ID
-      isChanged = true;
+      isChanged = false;
     }
     if (params.aptitudes) {
       // Extraer solo los IDs de las aptitudes
