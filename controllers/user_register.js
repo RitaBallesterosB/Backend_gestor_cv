@@ -16,8 +16,8 @@ export const registerUser = async (req, res) => {
       !params.nombre ||
       !params.apellido ||
       !params.correo_electronico ||
-      !params.password ||
-      !req.file 
+      !params.password //||
+      // !req.file 
     )
      {
       return res.status(400).send({
@@ -35,7 +35,7 @@ export const registerUser = async (req, res) => {
       correo_electronico: params.correo_electronico.toLowerCase(),
       password: params.password,
       role:params.role || 'usuario', // Asigna 'usuario' por defecto
-      imagen_perfil: req.file.path // Guarda la ruta de la imagen de perfil
+      //imagen_perfil: req.file.path // Guarda la ruta de la imagen de perfil
     });
     
   
@@ -205,4 +205,84 @@ export const getUserData = async (req, res) => {
 };
 
 
+
+
+
+
+// Método para subir AVATAR (imagen de perfil) y actualizar el campo image del User
+export const uploadAvatar = async (req, res) => {
+  try {
+    // Verificar si se ha subido un archivo
+    if(!req.file){
+      return res.status(400).send({
+        status: "error",
+        message: "Error la petición no incluye la imagen"
+      });
+    }
+
+    // Obtener la URL del archivo subido a Cloudinary
+    const avatarUrl = req.file.path; // Esta propiedad contiene la URL de Cloudinary
+
+    // Guardar la imagen en la BD
+    const userUpdated = await User.findByIdAndUpdate(
+      req.user.userId,
+      { image: avatarUrl },
+      { new: true }
+    );
+
+    // verificar si la actualización fue exitosa
+    if (!userUpdated) {
+      return res.status(500).send({
+        status: "error",
+        message: "Eror en la subida de la imagen"
+      });
+    }
+
+    // Devolver respuesta exitosa
+    return res.status(200).json({
+      status: "success",
+      user: userUpdated,
+      file: avatarUrl
+    });
+
+  } catch (error) {
+    console.log("Error al subir archivos", error)
+    return res.status(500).send({
+      status: "error",
+      message: "Error al subir archivos"
+    });
+  }
+}
+
+// Método para mostrar el AVATAR (imagen de perfil)
+export const avatar = async (req, res) => {
+  try {
+    // Obtener el parámetro del archivo desde la url
+    const userId = req.params.file;
+
+    // Buscar al usuario en la base de datos para obtener la URL de Cloudinary
+    const user = await User.findById(userId).select('image');
+
+    // Verificar si el usuario existe y tiene una imagen
+    if (!user || !user.image) {
+      return res.status(404).send({
+        status: "error",
+        message: "No existe la imagen o el usuario"
+      });
+    }
+
+    // Devolver la URL de la imagen desde Cloudinary
+    return res.status(200).json({
+      status: "success",
+      imageUrl: user.image // URL de Cloudinary almacenada en la BD
+    });
+
+  } catch (error) {
+    console.log("Error al mostrar la imagen", error)
+    return res.status(500).send({
+      status: "error",
+      message: "Error al mostrar la imagen"
+    });
+  }
+}
 
