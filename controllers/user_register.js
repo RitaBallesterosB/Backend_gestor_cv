@@ -3,86 +3,66 @@ import bcrypt from "bcrypt"; // Para encriptar la contraseña
 import { createToken } from "../services/jwt.js";
 import UserCV from '../models/users_cv.js'; 
 
-
-// Método Registro de Usuarios
 export const registerUser = async (req, res) => {
   try {
-    // Obtener los datos de la petición
     let params = req.body;
-    
 
     // Validación de los datos obtenidos
-    if (
-      !params.nombre ||
-      !params.apellido ||
-      !params.correo_electronico ||
-      !params.password //||
-      // !req.file 
-    )
-     {
-      return res.status(400).send({
-        status: "error",
-        message: "Todos los campos son requeridos.",
-      });
-      
+    if (!params.nombre || !params.apellido || !params.correo_electronico || !params.password) {
+      return res.status(400).json({ status: "error", message: "Todos los campos son requeridos." });
     }
 
-
-     // Crear el objeto de usuario con los datos que ya validamos
-     let user_register = new UserRegister({
+    // Crear el objeto de usuario
+    let user_register = new UserRegister({
       nombre: params.nombre,
       apellido: params.apellido,
       correo_electronico: params.correo_electronico.toLowerCase(),
       password: params.password,
-      role:params.role || 'usuario', // Asigna 'usuario' por defecto
-      //imagen_perfil: req.file.path // Guarda la ruta de la imagen de perfil
+      role: params.role || 'usuario',
+      imagen_perfil: null,
     });
-    
-  
-    // Busca si ya existe un usuario con el mismo correo electrónico
-    const existingUserRegister = await UserRegister.findOne({
-      correo_electronico: user_register.correo_electronico,
-    });
-  
-    // Si encuentra un usuario, valida si ya tiene una imagen de perfil
+
+    // Verificar si el usuario ya existe
+    const existingUserRegister = await UserRegister.findOne({ correo_electronico: user_register.correo_electronico });
     if (existingUserRegister) {
-      if (existingUserRegister.imagen_perfil) {
-        return res.status(409).json({
-          status: "error",
-          message: "¡El usuario ya tiene una imagen de perfil registrada!",
-        });
-      } else {
-      //   // Si no tiene imagen, se puede continuar con el registro
-      }
+      return res.status(409).json({ status: "error", message: "El correo electrónico ya está en uso." });
     }
 
-     
-  
+    // Subir la imagen si se proporciona
+    if (req.file) {
+      user_register.imagen_perfil = req.file.path;
+    }
 
     // Encriptar la contraseña
-    const salt = await bcrypt.genSalt(10); // Genera una salt para cifrar la contraseña
-    const hashedPassword = await bcrypt.hash(user_register.password, salt); // Cifra la contraseña
-    user_register.password = hashedPassword; // Asigna la contraseña cifrada al usuario
+    const salt = await bcrypt.genSalt(10);
+    user_register.password = await bcrypt.hash(user_register.password, salt);
 
     // Guardar el usuario en la base de datos
     await user_register.save();
 
-    // Devolver el usuario registrado
+    // Generar token JWT después de guardar el usuario
+    const token = createToken(user_register);
+
+    // Devolver el usuario registrado junto con el token
     return res.status(201).json({
       status: "success",
       message: "Registro de usuario exitoso",
-      user: user_register,
+      token,
+      user: {
+        id: user_register._id,
+        nombre: user_register.nombre,
+        apellido: user_register.apellido,
+        correo_electronico: user_register.correo_electronico,
+        role: user_register.role,
+        imagen_perfil: user_register.imagen_perfil,
+      },
     });
   } catch (error) {
-    // Manejo de errores
     console.log("Error en el registro de usuario:", error);
-    // Devuelve mensaje de error
-    return res.status(500).json({
-      status: "error",
-      message: "Error en el registro de usuario",
-    });
+    return res.status(500).json({ status: "error", message: "Error en el registro de usuario" });
   }
 };
+
 
 // Método de autenticación de usuarios (login) usando JWT
 export const login = async (req, res) => {
@@ -91,12 +71,10 @@ export const login = async (req, res) => {
     let params = req.body;
 
     // Validar parámetros: correo_electronico, password
-    if (!params.correo_electronico
-       || !params.password ) // 
-       {
+    if (!params.correo_electronico || !params.password) {
       return res.status(400).send({
         status: "error",
-        message: "Faltan datos por enviar"
+        message: "Faltan datos por enviar",
       });
     }
 
@@ -104,10 +82,10 @@ export const login = async (req, res) => {
     const user = await UserRegister.findOne({ correo_electronico: params.correo_electronico.toLowerCase() });
 
     // Si no existe el usuario
-    if(!user) {
+    if (!user) {
       return res.status(404).send({
         status: "error",
-        message: "Usuario no encontrado"
+        message: "Usuario no encontrado",
       });
     }
 
@@ -115,18 +93,15 @@ export const login = async (req, res) => {
     const validPassword = await bcrypt.compare(params.password, user.password);
 
     // Si la contraseña es incorrecta
-    if(!validPassword) {
+    if (!validPassword) {
       return res.status(401).send({
         status: "error",
-        message: "Contraseña incorrecta"
+        message: "Contraseña incorrecta",
       });
     }
 
- // Verificar si el usuario tiene una hoja de vida registrada
-
- const userCV = await UserCV.findOne({ user_register_id: user._id });
-
-
+    // Verificar si el usuario tiene una hoja de vida registrada
+    const userCV = await UserCV.findOne({ user_register_id: user._id });
 
     // Generar token JWT
     const token = createToken(user);
@@ -140,24 +115,25 @@ export const login = async (req, res) => {
         id: user._id,
         nombre: user.nombre,
         apellido: user.apellido,
-        correo_electronico: user.correo_electronico, 
-        role: user.role, // Incluir el rol en la respuesta
+        correo_electronico: user.correo_electronico,
+        role: user.role,
         imagen_perfil: user.imagen_perfil,
         created_at: user.created_at,
-        hasCV: !!userCV,  // Indicar si tiene una hoja de vida registrada
-      }
+        hasCV: !!userCV,
+      },
     });
-
   } catch (error) {
     // Manejo de errores
     console.log("Error en la autenticación del usuario:", error);
     // Devuelve mensaje de error
     return res.status(500).send({
       status: "error",
-      message: "Error en la autenticación del usuario"
+      message: "Error en la autenticación del usuario",
     });
   }
-}
+};
+
+const defaultImageUrl = "https://res.cloudinary.com/dhpapamer/image/upload/avatars/ypnrf7cejptttzjcoiqn"; // Cambia 'miusuario' por tu nombre de usuario
 
 // Método para obtener los datos del usuario por su ID se requieren para  mostrar el perfil y la imagen
 export const getUserData = async (req, res) => {
@@ -191,7 +167,7 @@ export const getUserData = async (req, res) => {
         nombre: user.nombre,
         apellido: user.apellido,
         correo_electronico: user.correo_electronico,
-        imagen_perfil: user.imagen_perfil, // Agregamos la ruta de la imagen de perfil
+        imagen_perfil: user.imagen_perfil || defaultImageUrl, // Usar la imagen de perfil o la imagen por defecto// Agregamos la ruta de la imagen de perfil
         initials: initials // Agregamos las iniciales al objeto de respuesta
       }
     });
@@ -209,14 +185,14 @@ export const getUserData = async (req, res) => {
 
 
 
-// Método para subir AVATAR (imagen de perfil) y actualizar el campo image del User
+// Método para subir AVATAR (imagen de perfil) y actualizar el campo imagen_perfil del User
 export const uploadAvatar = async (req, res) => {
   try {
     // Verificar si se ha subido un archivo
-    if(!req.file){
+    if (!req.file) {
       return res.status(400).send({
         status: "error",
-        message: "Error la petición no incluye la imagen"
+        message: "No se subió la imagen"
       });
     }
 
@@ -224,9 +200,11 @@ export const uploadAvatar = async (req, res) => {
     const avatarUrl = req.file.path; // Esta propiedad contiene la URL de Cloudinary
 
     // Guardar la imagen en la BD
-    const userUpdated = await User.findByIdAndUpdate(
+    const userUpdated = await UserRegister.findByIdAndUpdate(
       req.user.userId,
-      { image: avatarUrl },
+      { 
+        imagen_perfil: avatarUrl // Actualiza la imagen de perfil
+      },
       { new: true }
     );
 
@@ -234,7 +212,7 @@ export const uploadAvatar = async (req, res) => {
     if (!userUpdated) {
       return res.status(500).send({
         status: "error",
-        message: "Eror en la subida de la imagen"
+        message: "Error en la subida de la imagen"
       });
     }
 
@@ -246,13 +224,15 @@ export const uploadAvatar = async (req, res) => {
     });
 
   } catch (error) {
-    console.log("Error al subir archivos", error)
+    console.log("Error al subir archivos", error);
     return res.status(500).send({
       status: "error",
       message: "Error al subir archivos"
     });
   }
 }
+
+
 
 // Método para mostrar el AVATAR (imagen de perfil)
 export const avatar = async (req, res) => {
@@ -261,10 +241,10 @@ export const avatar = async (req, res) => {
     const userId = req.params.file;
 
     // Buscar al usuario en la base de datos para obtener la URL de Cloudinary
-    const user = await User.findById(userId).select('image');
+    const user = await UserRegister.findById(userId).select('imagen_perfil');
 
     // Verificar si el usuario existe y tiene una imagen
-    if (!user || !user.image) {
+    if (!user || !user.imagen_perfil) {
       return res.status(404).send({
         status: "error",
         message: "No existe la imagen o el usuario"

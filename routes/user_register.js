@@ -2,25 +2,33 @@ import { Router } from "express";
 import multer from 'multer';
 const router = Router();
 import { ensureAuth } from '../middlewares/auth.js';
-import { registerUser, login, getUserData } from '../controllers/user_register.js';
+import { registerUser, login, getUserData,uploadAvatar, avatar } from '../controllers/user_register.js';
 import { createCV, getUserDataForCV,getCVData,updateCV,deactivateCV,reactivateCV,getAreaOcupacionData, } from "../controllers/userCv.js";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
+import { v2 as cloudinary } from 'cloudinary';
 
-// Configuración de multer para almacenar archivos subidos
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/Imagen_perfil/'); // Define la carpeta donde se guardarán las imágenes
-  },
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`); // Cambia el nombre del archivo para evitar duplicados
+
+// Configuración de subida de archivos en Cloudinary
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'avatars',
+    allowedFormats: ['jpg', 'png', 'jpeg', 'gif'],
+    public_id: (req, file) => 'avatar-' + Date.now()
   }
 });
 
-const upload = multer({ storage }); // Crea una instancia de multer con la configuración de almacenamiento
+// Configurar multer con límites de tamaño
+const uploads = multer({
+  storage: storage,
+  limits: { fileSize: 1 * 1024 * 1024 }  // Limitar tamaño a 1 MB
+});
 
 
 
 // Ruta para registrar y loguear un usuario
-router.post('/register', upload.single('imagen_perfil'), registerUser);
+router.post('/register', [uploads.single("file0")], registerUser);
+
 
 router.post('/login', login);
 
