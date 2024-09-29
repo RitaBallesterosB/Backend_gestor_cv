@@ -330,3 +330,17 @@ export const getAreaOcupacionData = async (req, res) => {
     });
   }
 };
+
+// Método para listar todas las hojas de vida
+export const listAllCVs = async (req, res) => {
+  try {
+    const cvs = await UserCV.find();
+    if (!cvs || cvs.length === 0) {
+      return res.status(404).json({ message: 'No hay hojas de vida registradas' });
+    }
+    res.status(200).json(cvs);
+  } catch (error) {
+    console.error('Error al listar las hojas de vida:', error);
+    res.status(500).json({ message: 'Error al listar las hojas de vida', error });
+  }
+};

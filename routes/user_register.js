@@ -3,7 +3,7 @@ import multer from 'multer';
 const router = Router();
 import { ensureAuth } from '../middlewares/auth.js';
 import { registerUser, login, getUserData,uploadAvatar, avatar } from '../controllers/user_register.js';
-import { createCV, getUserDataForCV,getCVData,updateCV,deactivateCV,reactivateCV,getAreaOcupacionData, } from "../controllers/userCv.js";
+import { createCV, getUserDataForCV,getCVData,updateCV,deactivateCV,reactivateCV,getAreaOcupacionData} from "../controllers/userCv.js";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
 import { v2 as cloudinary } from 'cloudinary';
 
@@ -55,6 +55,8 @@ router.post('/reactivar-cv', ensureAuth, reactivateCV);
 
 // Ruta para obtener los datos de áreas de ocupación
 router.get('/get-areas-ocupacion', ensureAuth, getAreaOcupacionData); 
+
+
 
 
 
