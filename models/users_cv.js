@@ -18,6 +18,7 @@ const userCVSchema = new Schema({
     type: String,
     required: true
   },
+
   correo_usuario: {
     type: String,
     required: true

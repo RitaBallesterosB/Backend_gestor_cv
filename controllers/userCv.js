@@ -334,7 +334,7 @@ export const getAreaOcupacionData = async (req, res) => {
 // Método para listar todas las hojas de vida
 export const listAllCVs = async (req, res) => {
   try {
-    const cvs = await UserCV.find();
+    const cvs = await UserRegister.find();
     if (!cvs || cvs.length === 0) {
       return res.status(404).json({ message: 'No hay hojas de vida registradas' });
     }
