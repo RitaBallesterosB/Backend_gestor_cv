@@ -7,7 +7,7 @@ import { crearAptitud } from '../../controllers/admin/aptitud.js';
 import { ensureAuth, ensureAdmin } from "../../middlewares/auth.js";
 import { searchCV, getCVDataHandler,getAreaOcupacionDataHandler } from "../../controllers/admin/search_controller.js"; 
 import { validateSearchParams } from "../../middlewares/validateSearchParams.js";
-import { listAllCVs } from "../../controllers/userCv.js";
+import { listAllCVs, listAllUsers } from "../../controllers/userCv.js";
 
 
 // Rutas para administrador
@@ -26,6 +26,9 @@ router.get('/areas-ocupacion', ensureAuth, ensureAdmin, getAreaOcupacionDataHand
 
 // Nueva ruta para listar todas las hojas de vida creadas
 router.get('/listar-hojas-de-vida', ensureAuth, listAllCVs);  // Nueva ruta añadida
+
+// Nueva ruta para listar todas las hojas de vida creadas
+router.get('/listar-all-users', ensureAuth, listAllUsers);  // Nueva ruta añadida
 
 // Exportar el Router
 export default router;

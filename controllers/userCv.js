@@ -334,7 +334,7 @@ export const getAreaOcupacionData = async (req, res) => {
 // Método para listar todas las hojas de vida
 export const listAllCVs = async (req, res) => {
   try {
-    const cvs = await UserRegister.find();
+    const cvs = await UserCV.find();
     if (!cvs || cvs.length === 0) {
       return res.status(404).json({ message: 'No hay hojas de vida registradas' });
     }
@@ -342,5 +342,19 @@ export const listAllCVs = async (req, res) => {
   } catch (error) {
     console.error('Error al listar las hojas de vida:', error);
     res.status(500).json({ message: 'Error al listar las hojas de vida', error });
+  }
+};
+
+// Método para listar todos los usuarios
+export const listAllUsers = async (req, res) => {
+  try {
+    const cvs = await UserRegister.find();
+    if (!cvs || cvs.length === 0) {
+      return res.status(404).json({ message: 'No hay usuarios registrados' });
+    }
+    res.status(200).json(cvs);
+  } catch (error) {
+    console.error('Error al listar los usuarios:', error);
+    res.status(500).json({ message: 'Error al listar los usuarios', error });
   }
 };
