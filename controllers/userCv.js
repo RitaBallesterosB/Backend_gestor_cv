@@ -345,7 +345,7 @@ export const listAllCVs = async (req, res) => {
   }
 };
 
-// Método para listar todos los usuarios
+// Método para listar todos los usuarios nuevo
 export const listAllUsers = async (req, res) => {
   try {
     const cvs = await UserRegister.find();
