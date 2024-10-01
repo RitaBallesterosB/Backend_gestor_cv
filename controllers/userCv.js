@@ -334,7 +334,7 @@ export const getAreaOcupacionData = async (req, res) => {
 
 
 
-// Método para listar todas las hojas de vida con información de área de ocupación incluida
+// Método para listar todas las hojas de vida con información de área de ocupación 
 export const listAllCVs = async (req, res) => {
   try {
     // Obtener todas las hojas de vida y poblar el campo area_ocupacion
