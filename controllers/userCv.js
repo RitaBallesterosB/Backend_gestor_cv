@@ -333,15 +333,13 @@ export const getAreaOcupacionData = async (req, res) => {
 
 
 
+
 // Método para listar todas las hojas de vida con información de área de ocupación
 export const listAllCVs = async (req, res) => {
   try {
     // Obtener todas las hojas de vida y poblar el campo area_ocupacion
     const cvs = await UserCV.find()
-      .populate({
-        path: 'area_ocupacion', // Campo a poblar
-        select: 'nombre_area', // Seleccionar el campo que deseas del modelo referenciado
-      });
+      .populate('area_ocupacion'); // Poblar el campo area_ocupacion completo
 
     // Comprobar si hay hojas de vida registradas
     if (!cvs || cvs.length === 0) {
@@ -355,6 +353,7 @@ export const listAllCVs = async (req, res) => {
     res.status(500).json({ message: 'Error al listar las hojas de vida', error });
   }
 };
+
 
 
 // Método para listar todos los usuarios new
