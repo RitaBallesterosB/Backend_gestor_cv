@@ -369,3 +369,27 @@ export const listAllUsers = async (req, res) => {
     res.status(500).json({ message: 'Error al listar los usuarios', error });
   }
 };
+
+// Método para cargar un usuario específico por ID
+export const loadUserCV = async (req, res) => {
+  const { id } = req.params; // Obtener el ID del usuario desde los parámetros de la solicitud
+
+  try {
+    // Buscar el usuario CV por ID y poblar campos relacionados
+    const userCV = await UserCV.findById(id)
+      .populate('area_ocupacion') // Poblar área de ocupación
+      .populate('tipo_area_ocupacion') // Poblar tipo de área de ocupación
+      .populate('aptitudes'); // Poblar aptitudes
+
+    // Comprobar si se encontró el usuario CV
+    if (!userCV) {
+      return res.status(404).json({ message: 'Hoja de vida no encontrada' });
+    }
+
+    // Responder con el usuario CV encontrado
+    res.status(200).json(userCV);
+  } catch (error) {
+    console.error('Error al cargar la hoja de vida:', error);
+    res.status(500).json({ message: 'Error al cargar la hoja de vida', error });
+  }
+};
