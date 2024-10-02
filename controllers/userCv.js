@@ -393,3 +393,4 @@ export const loadUserCV = async (req, res) => {
     res.status(500).json({ message: 'Error al cargar la hoja de vida', error });
   }
 };
+
